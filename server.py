@@ -2,13 +2,7 @@
 
 from flask import Flask
 from flask_cors import CORS
-from dotenv import load_dotenv
 
-load_dotenv()
-
-# IMPORT DATABASE CONNECTION
-
-from config.database import get_db_connection
 
 # INITIALIZE FLASK
 
