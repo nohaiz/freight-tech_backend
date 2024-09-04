@@ -101,7 +101,7 @@ def update(id):
       order.weightValue = order_data.get('weightValue')
     session.commit()
 
-    return jsonify(order.to_dict()), 200  
+    return jsonify({'pickupLocation' : order.pickupLocation, 'dropoffLocation': order.dropoffLocation, 'vehicleType': order.vehicleType.value, 'dimensions': order.dimensions, 'weightValue': order.weightValue}), 200  
       
   except Exception as e:
     return jsonify({'error': str(e)}), 400
