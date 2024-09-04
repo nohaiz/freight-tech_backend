@@ -6,40 +6,7 @@ from flask import Blueprint , request, jsonify
 
 from config.database import Order, session
 
-# EXPORT ROUTES
-
-order_routes = Blueprint('order_routes',__name__)
-
-@order_routes.route('/orders', methods=['POST'])
-
-def create_order():
-  try:      
-    order_data = request.get_json()
-
-    validate_result = validate_date(order_data)
-    print(validate_result) 
-    if validate_result.get('error'):
-      return jsonify(validate_result.get('message')), 400
-    else:
-      new_order = Order(
-        customerId = order_data.get('customerId'),
-        driverId = order_data.get('driverId'),
-        pickupLocation = order_data.get('pickupLocation'),
-        dropoffLocation = order_data.get('dropoffLocation'),
-        orderStatus = order_data.get('orderStatus'),
-        paymentAmount = order_data.get('paymentAmount'),
-        vehicleType = order_data.get('vehicleType'),
-        dimensions = order_data.get('dimensions'),
-        weightValue = order_data.get('weightValue'),
-        deliveryTime = order_data.get('deliveryTime')
-      )
-      session.add(new_order)
-      session.commit()
-      return jsonify(order_data), 201
-    
-  except Exception as e:
-    return jsonify({'error': str(e)}), 400
-  
+#  DELEVIRY TIME VALIDATION INCOMPLETE WILL DO LTR
 def validate_date(data):
   customerId = data.get('customerId')
   driverId = data.get('driverId')
@@ -76,3 +43,36 @@ def validate_date(data):
   
   return data
 
+# EXPORT ROUTES
+
+order_routes = Blueprint('order_routes',__name__)
+
+@order_routes.route('/orders', methods=['POST'])
+
+def create_order():
+  try:      
+    order_data = request.get_json()
+
+    validate_result = validate_date(order_data)
+    print(validate_result) 
+    if validate_result.get('error'):
+      return jsonify(validate_result.get('message')), 400
+    else:
+      new_order = Order(
+        customerId = order_data.get('customerId'),
+        driverId = order_data.get('driverId'),
+        pickupLocation = order_data.get('pickupLocation'),
+        dropoffLocation = order_data.get('dropoffLocation'),
+        orderStatus = order_data.get('orderStatus'),
+        paymentAmount = order_data.get('paymentAmount'),
+        vehicleType = order_data.get('vehicleType'),
+        dimensions = order_data.get('dimensions'),
+        weightValue = order_data.get('weightValue'),
+        deliveryTime = order_data.get('deliveryTime')
+      )
+      session.add(new_order)
+      session.commit()
+      return jsonify(order_data), 201
+    
+  except Exception as e:
+    return jsonify({'error': str(e)}), 400
