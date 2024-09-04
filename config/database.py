@@ -13,7 +13,7 @@ Base = declarative_base()
 class OrderStatusEnum(enum.Enum):
     pending = "pending"
     completed = "completed"
-    cancelled = "on-going"
+    cancelled = "on-route"
 
 class VehicleTypeEnum(enum.Enum):
     car = "car"
@@ -30,7 +30,7 @@ class Order(Base):
     driverId = Column(Integer, nullable=True)
     pickupLocation = Column(String, nullable=False)
     dropoffLocation = Column(String, nullable=False)
-    orderStatus = Column(Enum(OrderStatusEnum), nullable=False)
+    orderStatus = Column(Enum(OrderStatusEnum), nullable=False) 
     paymentAmount = Column(Float, nullable=False)
     vehicleType = Column(Enum(VehicleTypeEnum), nullable=False)
     dimensions = Column(Text, nullable=False)
@@ -51,6 +51,10 @@ class Order(Base):
         self.weightValue = weightValue
         self.deliveryTime = deliveryTime
 
+    def to_dict(self):
+        return {"orderId": self.orderId,"customerId": self.customerId,"driverId": self.driverId,"pickupLocation": self.pickupLocation,"dropoffLocation": self.dropoffLocation,"orderStatus": self.orderStatus.value,  "paymentAmount": self.paymentAmount,"vehicleType": self.vehicleType.value,"weightValue": self.weightValue,"deliveryTime": self.deliveryTime.isoformat(),"createdAt": self.createdAt.isoformat(),"updatedAt": self.updatedAt.isoformat()
+        }
+    
 def get_env_variable(var_name, default_value=None):
     """Get the environment variable or return a default value."""
     return os.getenv(var_name, default_value)
