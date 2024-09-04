@@ -13,7 +13,7 @@ Base = declarative_base()
 class OrderStatusEnum(enum.Enum):
     pending = "pending"
     completed = "completed"
-    cancelled = "on-going"
+    cancelled = "cancelled"
 
 class VehicleTypeEnum(enum.Enum):
     car = "car"
@@ -30,7 +30,7 @@ class Order(Base):
     driverId = Column(Integer, nullable=True)
     pickupLocation = Column(String, nullable=False)
     dropoffLocation = Column(String, nullable=False)
-    orderStatus = Column(Enum(OrderStatusEnum), nullable=False)
+    orderStatus = Column(Enum(OrderStatusEnum), nullable=False) 
     paymentAmount = Column(Float, nullable=False)
     vehicleType = Column(Enum(VehicleTypeEnum), nullable=False)
     dimensions = Column(Text, nullable=False)

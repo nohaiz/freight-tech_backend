@@ -47,7 +47,6 @@ def create_order():
 @order_routes.route('/orders/<id>', methods=['PUT'])
 
 def update(id):
-  print(id)
   try:  
 
     order = session.query(Order).filter_by(orderId=id).first()
@@ -60,19 +59,47 @@ def update(id):
     if validate_result.get('error'):
       return jsonify(validate_result.get('message')), 400
     else:
-      order.customerId = order_data.get('customerId'),
-      order.driverId = order_data.get('driverId'),
-      order.pickupLocation = order_data.get('pickupLocation'),
-      order.dropoffLocation = order_data.get('dropoffLocation'),
-      order.orderStatus = order_data.get('orderStatus'),
-      order.paymentAmount = order_data.get('paymentAmount'),
-      order.vehicleType = order_data.get('vehicleType'),
-      order.dimensions = order_data.get('dimensions'),
-      order.weightValue = order_data.get('weightValue'),
+      order.customerId = order_data.get('customerId')
+      order.driverId = order_data.get('driverId')
+      order.pickupLocation = order_data.get('pickupLocation')
+      order.dropoffLocation = order_data.get('dropoffLocation')
+      order.orderStatus = order_data.get('orderStatus')
+      order.paymentAmount = order_data.get('paymentAmount')
+      order.vehicleType = order_data.get('vehicleType') 
+      order.dimensions = order_data.get('dimensions')
+      order.weightValue = order_data.get('weightValue')
       order.deliveryTime = order_data.get('deliveryTime')
-
     session.commit()
-    return jsonify(order), 200
+
+    order_dict = {
+            'orderId': order.orderId,
+            'customerId': order.customerId,
+            'driverId': order.driverId,
+            'pickupLocation': order.pickupLocation,
+            'dropoffLocation': order.dropoffLocation,
+            'orderStatus': order.orderStatus.value,
+            'paymentAmount': order.paymentAmount,
+            'vehicleType': order.vehicleType.value,
+            'dimensions': order.dimensions,
+            'weightValue': order.weightValue,
+            'deliveryTime': order.deliveryTime
+        }
+    return jsonify(order_dict), 200  
       
+  except Exception as e:
+    return jsonify({'error': str(e)}), 400
+  
+@order_routes.route('/orders/<id>', methods=['DELETE'])
+
+def delete(id): 
+  try:  
+    order = session.query(Order).filter_by(orderId=id).first()
+    
+    if not order:
+        return jsonify({'error': 'Order not found'}), 404
+    session.delete(order)
+    session.commit()
+
+    return jsonify("Order deleted successfully"),200
   except Exception as e:
     return jsonify({'error': str(e)}), 400
