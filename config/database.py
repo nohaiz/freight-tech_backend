@@ -1,7 +1,6 @@
 import os
 import enum
-from datetime import date
-from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, Enum, Float, Text, Date, TIMESTAMP, DateTime, func
+from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, Enum, Float, Text, Date,DateTime, func
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -26,8 +25,9 @@ class Order(Base):
     __tablename__ = "Orders"
 
     orderId = Column(Integer, primary_key=True, autoincrement=True)
-    # customerId = Column(Integer, ForeignKey('User.Id'), nullable=False)
-    # driverId = Column(Integer, ForeignKey('User.Id'), nullable=False)
+    # SET THE NULLABLE TO FALSE AND ADD ForeignKey('User.Id')
+    customerId = Column(Integer, nullable=True)
+    driverId = Column(Integer, nullable=True)
     pickupLocation = Column(String, nullable=False)
     dropoffLocation = Column(String, nullable=False)
     orderStatus = Column(Enum(OrderStatusEnum), nullable=False)
@@ -39,9 +39,9 @@ class Order(Base):
     createdAt = Column(DateTime, default=func.now())
     updatedAt = Column(DateTime, default=func.now(), onupdate=func.now())
 
-    def __init__(self, pickupLocation, dropoffLocation, orderStatus, paymentAmount, vehicleType, dimensions, weightValue, deliveryTime):
-        # self.customerId = customerId
-        # self.driverId = driverId
+    def __init__(self, customerId, driverId, pickupLocation, dropoffLocation, orderStatus, paymentAmount, vehicleType, dimensions, weightValue, deliveryTime):
+        self.customerId = customerId
+        self.driverId = driverId
         self.pickupLocation = pickupLocation
         self.dropoffLocation = dropoffLocation
         self.orderStatus = orderStatus
@@ -64,23 +64,3 @@ Base.metadata.create_all(bind=engine)
 
 Session = sessionmaker(bind=engine)
 session = Session()
-
-# Test
-
-sample_order = Order(
-    # customerId=1,
-    # driverId=2,
-    pickupLocation="123 Elm Street, Springfield",
-    dropoffLocation="456 Oak Avenue, Springfield",
-    orderStatus=OrderStatusEnum.pending,
-    paymentAmount=99.99,
-    vehicleType=VehicleTypeEnum.truck,
-    dimensions="10x10x10",
-    weightValue="200 lbs",
-    deliveryTime=date(2024, 12, 25)
-)
-
-session.add(sample_order)
-session.commit()
-
-print("Sample order added successfully.")
