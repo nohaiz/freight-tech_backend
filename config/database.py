@@ -34,7 +34,7 @@ class Order(Base):
     paymentAmount = Column(Float, nullable=False)
     vehicleType = Column(Enum(VehicleTypeEnum), nullable=False)
     dimensions = Column(Text, nullable=False)
-    weightValue = Column(String, nullable=False)
+    weightValue = Column(Float, nullable=False)
     deliveryTime = Column(Date, nullable=False)
     createdAt = Column(DateTime, default=func.now())
     updatedAt = Column(DateTime, default=func.now(), onupdate=func.now())
