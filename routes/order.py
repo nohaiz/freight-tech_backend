@@ -34,12 +34,19 @@ def validate_date(data):
   valid_vehicle_types = {'car', 'truck', 'van'}
   if vehicleType not in valid_vehicle_types:
     return {'error': True , 'message': 'Data entry is invalid. Vehicle type is invalid'}
-
-  if not isinstance(paymentAmount, (float, int)) or paymentAmount < 0:
-      return {'error': True, 'message': 'Data entry is invalid. Payment amount must be a positive number.'}
   
-  if not isinstance(weightValue, (float, int)) or weightValue < 0:
-      return {'error': True, 'message': 'Data entry is invalid. Weight value must be a positive number.'}
+  try:
+      paymentAmount = float(paymentAmount)
+      if paymentAmount < 0:
+          return {'error': True, 'message': 'Data entry is invalid. Payment amount must be a positive number.'}
+  except ValueError:
+      return {'error': True, 'message': 'Data entry is invalid. Payment amount must be a valid number.'}
+  try:
+      weightValue = float(weightValue)
+      if weightValue < 0:
+          return {'error': True, 'message': 'Data entry is invalid. Weight value must be a positive number.'}
+  except ValueError:
+      return {'error': True, 'message': 'Data entry is invalid. Weight value must be a valid number.'}
   
   return data
 
