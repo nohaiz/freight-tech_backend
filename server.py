@@ -5,7 +5,7 @@ from flask_cors import CORS
 
 # IMPORTED ROUTES
 
-from routes.order import order_routes
+from routes.shippers_order import order_routes
 
 
 # INITIALIZE FLASK
