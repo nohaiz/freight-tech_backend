@@ -13,7 +13,6 @@ JWT_SECRET = os.getenv('JWT_SECRET')
 def signup():
     
     session = SessionLocal()
-
     try:
         new_user_data = request.get_json()
         username = new_user_data.get('username')
