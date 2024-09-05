@@ -24,6 +24,7 @@ def show(userId):
             return jsonify({"error": 'Opps something went wrong'}), 400
         
     except Exception as e:
+        session.rollback()
         return jsonify({'error': str(e)}), 400
     finally:
         session.close()
@@ -105,7 +106,7 @@ def delete(userId):
 
             return jsonify({'message': 'User deleted successfully'}), 200
         else: 
-            return jsonify({"error": 'Unauthorized request'}), 403
+            return jsonify({"error": 'Opps something went wrong'}),400 
 
     except Exception as e:
         session.rollback()
