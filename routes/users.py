@@ -28,11 +28,14 @@ def signup():
         if password != confirm_password:
             return jsonify({"error": "Passwords do not match."}), 400
 
-        existing_user = session.query(User).filter((User.email == email)).first()
+        existing_user_by_email = session.query(User).filter(User.email == email).first()
+        existing_user_by_username = session.query(User).filter(User.username == username).first()
 
-        if existing_user:
+        if existing_user_by_email:
             return jsonify({"error": "Email already exists."}), 400
-
+        if existing_user_by_username:
+            return jsonify({"error": "Username already exists."}), 400
+        
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
         new_user = User(
@@ -89,6 +92,7 @@ def signin():
         user = session.query(User).filter_by(email=email).first()
 
         if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+
             user_role = session.query(UserRole).filter_by(userId=user.userId).first()
             if user_role:
                 role = session.query(Role).filter_by(roleId=user_role.roleId).first()
@@ -110,7 +114,7 @@ def signin():
             return jsonify({"error": "Invalid email or password."}), 401
 
     except Exception as e:
-        return jsonify({"error": "An error occurred during signin."}), 500
+        return jsonify({"error": str(e)}), 500
 
     finally:
         session.close()

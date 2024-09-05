@@ -16,11 +16,10 @@ driver_order_routes = Blueprint('driver_order_routes',__name__)
 
 @driver_order_routes.route('/drivers/orders')
 
-# Currently, the function displays all orders because we don't have a driverId to filter and show only the orders associated with a specific shipper. Eventually, this ID should be retrieved from the verifyToken middleware to enable proper filtering
 
 def index():
   try:
-    orders = session.query(Order).all()
+    orders = session.query(Order).filter_by(driverId = request.user.get('userId')).all()
 
     if not orders:
       return jsonify({'error': 'Order not found'}), 404
