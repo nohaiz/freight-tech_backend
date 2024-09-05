@@ -3,11 +3,11 @@ from flask import Blueprint, request, jsonify
 from config.database import User,UserRole,Order,OrderStatusEnum,SessionLocal
 
 users_routes = Blueprint('users_routes', __name__)
+session = SessionLocal()
 
 @users_routes.route('/users/<int:userId>', methods=['GET'])
 
 def show(userId):
-    session = SessionLocal()
     try:
         if  request.user.get('userId') == userId:
             user = session.query(User).filter_by(userId=userId).first()
@@ -30,9 +30,7 @@ def show(userId):
 
 
 @users_routes.route('/users/<int:userId>', methods=['PUT'])
-def update(userId):
-    session = SessionLocal()
-    
+def update(userId):    
     try:
         if  request.user.get('userId') == userId:
             user = session.query(User).filter_by(userId=userId).first()
@@ -79,8 +77,6 @@ def update(userId):
         
 @users_routes.route('/users/<int:userId>', methods=['DELETE'])
 def delete(userId):
-    session = SessionLocal()
-
     try:
         if request.user.get('userId') == userId:
 
