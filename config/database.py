@@ -1,8 +1,10 @@
 import os
 import enum
-from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, Enum, Float, Text, Date,DateTime, func
+from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, Enum, Float, Text, Date,DateTime, Boolean, func 
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import relationship
+
 
 from dotenv import load_dotenv
 
@@ -10,6 +12,41 @@ load_dotenv()
 
 Base = declarative_base()
 
+
+class UserRoleEnum(enum.Enum):
+    Shipper = "Shipper"
+    Driver = "Driver"
+    Admin = "Admin"
+
+class Role(Base):
+    __tablename__ = 'Roles'
+
+    roleId = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    role = Column(Enum(UserRoleEnum), unique=True, nullable=False)
+
+    user_roles = relationship('UserRole', back_populates='role')
+
+class User(Base):
+    __tablename__ = 'Users'
+
+    userId = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    username = Column(String, unique=True, nullable=False)
+    email = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)
+    verifiedUser = Column(Boolean, nullable=False)
+
+    roles = relationship('UserRole', back_populates='user')
+
+class UserRole(Base):
+    __tablename__ = 'User_roles'
+
+    userRoleId = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    userId = Column(Integer, ForeignKey('Users.userId'), nullable=False)
+    roleId = Column(Integer, ForeignKey('Roles.roleId'), nullable=False)
+
+    user = relationship('User', back_populates='roles')
+
+    role = relationship('Role', back_populates='user_roles')
 class OrderStatusEnum(enum.Enum):
     pending = "pending"
     completed = "completed"
@@ -67,4 +104,5 @@ engine = create_engine(
 Base.metadata.create_all(bind=engine)
 
 Session = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 session = Session()
