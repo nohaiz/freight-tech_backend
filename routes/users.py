@@ -4,12 +4,12 @@ import bcrypt
 import jwt
 from config.database import User, Role, UserRole, UserRoleEnum, SessionLocal
 
-user_routes = Blueprint('user_routes', __name__)
+auth_routes = Blueprint('auth_routes', __name__)
 
 JWT_SECRET = os.getenv('JWT_SECRET')
 
 
-@user_routes.route('/auth/sign-up', methods=['POST'])
+@auth_routes.route('/auth/sign-up', methods=['POST'])
 def signup():
     
     session = SessionLocal()
@@ -28,12 +28,10 @@ def signup():
         if password != confirm_password:
             return jsonify({"error": "Passwords do not match."}), 400
 
-        existing_user = session.query(User).filter(
-            (User.username == username) | (User.email == email)
-        ).first()
+        existing_user = session.query(User).filter((User.email == email)).first()
 
         if existing_user:
-            return jsonify({"error": "Username or email already exists."}), 400
+            return jsonify({"error": "Email already exists."}), 400
 
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
@@ -45,11 +43,13 @@ def signup():
         )
         session.add(new_user)
         session.commit()
+        session.refresh(new_user)
 
         if verifiedUser:
-          role_name = UserRoleEnum.Shipper
+          role_name = UserRoleEnum.shipper
+          print(role_name)
         else:
-          role_name = UserRoleEnum.Driver
+          role_name = UserRoleEnum.driver
 
         role = session.query(Role).filter_by(role=role_name).first()
 
@@ -64,26 +64,16 @@ def signup():
         }
         token = jwt.encode(token_payload, JWT_SECRET, algorithm='HS256')
 
-        return jsonify({
-            "message": "User created successfully!",
-            "userId": new_user.userId,
-            "username": new_user.username,
-            "email": new_user.email,
-            "roleId": role.roleId,
-            "role": role.role.value,
-            "token": token
-        }), 201
+        return jsonify({"token": token}), 201
 
     except Exception as e:
         session.rollback() 
-        return jsonify({"error": "An error occurred during signup."}), 500
+        return jsonify({"error": str(e)}), 500
 
     finally:
         session.close()
 
-
-
-@user_routes.route('/auth/sign-in', methods=['POST'])
+@auth_routes.route('/auth/sign-in', methods=['POST'])
 def signin():
     
     session = SessionLocal()
@@ -114,13 +104,7 @@ def signin():
             }
             token = jwt.encode(token_payload, JWT_SECRET, algorithm='HS256')
 
-            return jsonify({
-                "message": "Signed in successfully!",
-                "token": token,
-                "userId": user.userId,
-                "roleId": role.roleId,
-                "role": role.role.value,
-            }), 200
+            return jsonify({"token": token}), 200
         
         else:
             return jsonify({"error": "Invalid email or password."}), 401

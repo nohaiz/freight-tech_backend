@@ -14,16 +14,16 @@ Base = declarative_base()
 
 
 class UserRoleEnum(enum.Enum):
-    Shipper = "Shipper"
-    Driver = "Driver"
-    Admin = "Admin"
+    shipper = "shipper"
+    driver = "driver"
+    admin = "admin"
 
 class Role(Base):
+
     __tablename__ = 'Roles'
 
     roleId = Column(Integer, primary_key=True, autoincrement=True, index=True)
     role = Column(Enum(UserRoleEnum), unique=True, nullable=False)
-
     user_roles = relationship('UserRole', back_populates='role')
 
 class User(Base):
@@ -34,7 +34,6 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     verifiedUser = Column(Boolean, nullable=False)
-
     roles = relationship('UserRole', back_populates='user')
 
 class UserRole(Base):
@@ -43,10 +42,9 @@ class UserRole(Base):
     userRoleId = Column(Integer, primary_key=True, autoincrement=True, index=True)
     userId = Column(Integer, ForeignKey('Users.userId'), nullable=False)
     roleId = Column(Integer, ForeignKey('Roles.roleId'), nullable=False)
-
     user = relationship('User', back_populates='roles')
-
     role = relationship('Role', back_populates='user_roles')
+
 class OrderStatusEnum(enum.Enum):
     pending = "pending"
     completed = "completed"
@@ -62,9 +60,8 @@ class Order(Base):
     __tablename__ = "Orders"
 
     orderId = Column(Integer, primary_key=True, autoincrement=True)
-    # SET THE NULLABLE TO FALSE AND ADD ForeignKey('User.Id')
-    customerId = Column(Integer, nullable=True)
-    driverId = Column(Integer, nullable=True)
+    customerId = Column(Integer, ForeignKey('Users.userId'), nullable=True)
+    driverId = Column(Integer, ForeignKey('Users.userId'), nullable=True)
     pickupLocation = Column(String, nullable=False)
     dropoffLocation = Column(String, nullable=False)
     orderStatus = Column(Enum(OrderStatusEnum), nullable=False) 

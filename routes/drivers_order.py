@@ -12,9 +12,9 @@ from utils.validate_data import validate_date
 
 # EXPORT ROUTES
 
-order_routes = Blueprint('order_routes',__name__)
+driver_order_routes = Blueprint('driver_order_routes',__name__)
 
-@order_routes.route('/drivers/orders')
+@driver_order_routes.route('/drivers/orders')
 
 # Currently, the function displays all orders because we don't have a driverId to filter and show only the orders associated with a specific shipper. Eventually, this ID should be retrieved from the verifyToken middleware to enable proper filtering
 
@@ -31,7 +31,7 @@ def index():
   except Exception as e: 
     return jsonify({'error': str(e)}), 400
 
-@order_routes.route('/drivers/orders/<id>', methods=['GET'])
+@driver_order_routes.route('/drivers/orders/<id>', methods=['GET'])
 
 def show(id):
   try:
@@ -44,7 +44,7 @@ def show(id):
   except Exception as e: 
     return jsonify({'error': str(e)}), 400
 
-@order_routes.route('/drivers/orders/<id>', methods=['PUT'])
+@driver_order_routes.route('/drivers/orders/<id>', methods=['PUT'])
 
 def update(id):
   try:  

@@ -12,9 +12,9 @@ from utils.validate_data import validate_date
 
 # EXPORT ROUTES
 
-order_routes = Blueprint('order_routes',__name__)
+shipper_order_routes = Blueprint('shipper_order_routes',__name__)
 
-@order_routes.route('/shippers/orders')
+@shipper_order_routes.route('/shippers/orders')
 
 # Currently, the function displays all orders because we don't have a shipperId or customerId to filter and show only the orders associated with a specific shipper. Eventually, this ID should be retrieved from the verifyToken middleware to enable proper filtering
 
@@ -31,7 +31,7 @@ def index():
   except Exception as e: 
     return jsonify({'error': str(e)}), 400
 
-@order_routes.route('/shippers/orders', methods=['POST'])
+@shipper_order_routes.route('/shippers/orders', methods=['POST'])
 
 # This function requires a shipperId or customerId to create a new order. For the time being, I manually pass the required ID, but ideally, it should be retrieved through the verifyToken middleware.
 
@@ -66,7 +66,7 @@ def create_order():
   except Exception as e:
     return jsonify({'error': str(e)}), 400
   
-@order_routes.route('/shippers/orders/<id>', methods=['GET'])
+@shipper_order_routes.route('/shippers/orders/<id>', methods=['GET'])
 
 def show(id):
   try:
@@ -79,7 +79,7 @@ def show(id):
   except Exception as e: 
     return jsonify({'error': str(e)}), 400
 
-@order_routes.route('/shippers/orders/<id>', methods=['PUT'])
+@shipper_order_routes.route('/shippers/orders/<id>', methods=['PUT'])
 
 def update(id):
   try:  
@@ -106,7 +106,7 @@ def update(id):
   except Exception as e:
     return jsonify({'error': str(e)}), 400
   
-@order_routes.route('/shippers/orders/<id>', methods=['DELETE'])
+@shipper_order_routes.route('/shippers/orders/<id>', methods=['DELETE'])
 
 def delete(id): 
   try:  
