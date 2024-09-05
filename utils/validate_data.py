@@ -1,4 +1,5 @@
-#  DELEVIRY TIME VALIDATION INCOMPLETE WILL DO LTR
+#  DELEVIRY TIME VALIDATION INCOMPLETE WILL DO LTR#
+
 def validate_date(data):
   customerId = data.get('customerId')
   driverId = data.get('driverId')
