@@ -83,10 +83,10 @@ def create_order():
 def show(id):
   try:
     order = session.query(Order).filter_by(orderId=id).first()
-    if  request.user.get('userId') == order.customerId:
-      if not order:
-        return jsonify({'error': 'Order not found'}), 404
-      
+    if not order:
+      return jsonify({'error': 'Order not found'}), 404
+    
+    if  request.user.get('userId') == order.customerId:      
       return jsonify(order.to_dict())
     else:
       return jsonify({"error": 'Opps something went wrong'}),400  

@@ -41,9 +41,10 @@ def index():
 def show(id):
   try:
       order = session.query(Order).filter_by(orderId=id).first()
-      if  request.user.get('userId') == order.driverId:
-        if not order:
+      if not order:
           return jsonify({'error': 'Order not found'}), 404        
+      
+      if  request.user.get('userId') == order.driverId:
         return jsonify(order.to_dict())
       elif order.driverId is None:
         return jsonify(order.to_dict())          
