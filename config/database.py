@@ -24,7 +24,14 @@ class Role(Base):
 
     roleId = Column(Integer, primary_key=True, autoincrement=True, index=True)
     role = Column(Enum(UserRoleEnum), unique=True, nullable=False)
+
     user_roles = relationship('UserRole', back_populates='role')
+
+    def to_dict(self):
+        return {
+            "roleId": self.roleId,
+            "role": self.role.value
+        }
 
 class User(Base):
     __tablename__ = 'Users'
@@ -33,8 +40,18 @@ class User(Base):
     username = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
-    verifiedUser = Column(Boolean, nullable=False)
+    verifiedUser = Column(Boolean,nullable=False)
     roles = relationship('UserRole', back_populates='user')
+
+    def to_dict(self):
+        roles = [user_role.role.role.value for user_role in self.roles]
+        return {
+            "userId": self.userId,
+            "username": self.username,
+            "email": self.email,
+            "verifiedUser": self.verifiedUser,
+            "roles": roles
+        }
 
 class UserRole(Base):
     __tablename__ = 'User_roles'
