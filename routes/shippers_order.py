@@ -142,6 +142,8 @@ def delete(id):
       if order.orderStatus != OrderStatusEnum.on_route:
         session.delete(order)
         session.commit()
+      elif order.orderStatus != OrderStatusEnum.completed:
+        return jsonify("Order is completed. This order can not be deleted"),400     
       else:
         return jsonify("Order is on_route"),400  
       return jsonify("Order deleted successfully"),200
