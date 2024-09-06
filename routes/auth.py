@@ -22,7 +22,7 @@ def signup():
         verifiedUser = new_user_data.get('verifiedUser')
 
         if not all([username, email, password, confirm_password, verifiedUser is not None]):
-            return jsonify({"error": "Incomplete data."}), 400
+            return jsonify({"error": "Incomplete data. All fields are required."}), 400
 
         if password != confirm_password:
             return jsonify({"error": "Passwords do not match."}), 400
@@ -48,15 +48,16 @@ def signup():
         session.refresh(new_user)
 
         if verifiedUser:
-          role_name = UserRoleEnum.shipper
-          print(role_name)
+            role_name = UserRoleEnum.shipper
         else:
-          role_name = UserRoleEnum.driver
+            role_name = UserRoleEnum.driver
 
         role = session.query(Role).filter_by(role=role_name).first()
 
-        user_role = UserRole(userId=new_user.userId, roleId=role.roleId)
+        if not role:
+            return jsonify({"error": f"Role '{role_name}' not found."}), 404
 
+        user_role = UserRole(userId=new_user.userId, roleId=role.roleId)
         session.add(user_role)
         session.commit()
 
@@ -67,13 +68,13 @@ def signup():
         token = jwt.encode(token_payload, JWT_SECRET, algorithm='HS256')
 
         return jsonify({
-            "token": token ,
-            'userId' : new_user.userId,
-              }), 201
+            "token": token,
+            'userId': new_user.userId,
+        }), 201
 
     except Exception as e:
-        session.rollback() 
-        return jsonify({"error": str(e)}), 500
+        session.rollback()
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
     finally:
         session.close()
@@ -89,7 +90,7 @@ def signin():
         password = user_data.get('password')
 
         if not all([email, password]):
-            return jsonify({"error": "Incomplete data."}), 400
+            return jsonify({"error": "Incomplete data. Both email and password are required."}), 400 
 
         user = session.query(User).filter_by(email=email).first()
 
@@ -98,11 +99,10 @@ def signin():
             user_role = session.query(UserRole).filter_by(userId=user.userId).first()
             if user_role:
                 role = session.query(Role).filter_by(roleId=user_role.roleId).first()
+                if not role:
+                    return jsonify({"error": "Role not found in the system."}), 404
             else:
-                return jsonify({"error": "User role not found."}), 404
-
-            if not role:
-                return jsonify({"error": "Role not found."}), 404
+                return jsonify({"error": "User role not assigned."}), 404
 
             token_payload = {
                 'userId': user.userId,
@@ -116,7 +116,7 @@ def signin():
             return jsonify({"error": "Invalid email or password."}), 401
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
     finally:
         session.close()
