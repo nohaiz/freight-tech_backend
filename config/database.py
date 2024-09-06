@@ -100,7 +100,4 @@ engine = create_engine(
 
 Base.metadata.create_all(bind=engine)
 
-# Need to remove the session and add local session dont for get this
-Session = sessionmaker(bind=engine)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-session = Session()
