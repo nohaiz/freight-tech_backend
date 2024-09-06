@@ -48,7 +48,7 @@ class UserRole(Base):
 class OrderStatusEnum(enum.Enum):
     pending = "pending"
     completed = "completed"
-    cancelled = "on-route"
+    on_route = "on_route"
 
 class VehicleTypeEnum(enum.Enum):
     car = "car"
@@ -60,7 +60,7 @@ class Order(Base):
     __tablename__ = "Orders"
 
     orderId = Column(Integer, primary_key=True, autoincrement=True)
-    customerId = Column(Integer, ForeignKey('Users.userId'), nullable=True)
+    customerId = Column(Integer, ForeignKey('Users.userId'), nullable=False)
     driverId = Column(Integer, ForeignKey('Users.userId'), nullable=True)
     pickupLocation = Column(String, nullable=False)
     dropoffLocation = Column(String, nullable=False)
@@ -100,6 +100,4 @@ engine = create_engine(
 
 Base.metadata.create_all(bind=engine)
 
-Session = sessionmaker(bind=engine)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-session = Session()

@@ -15,12 +15,14 @@ def validate_date(data):
   if not all([customerId, driverId, pickupLocation, dropoffLocation, orderStatus, paymentAmount, vehicleType, dimensions, weightValue, deliveryTime]):
     return {'error': True , 'message': 'Data entry is invalid. Please fill in all the fields'}
   try:
-      customerId = int(customerId)
-      driverId = int(driverId)
+    customerId = int(customerId)
+    if driverId != 'null':
+        driverId = int(driverId)
   except ValueError:
-      return {'error': True, 'message': 'Data entry is invalid. Customer ID and Driver ID must be valid integers.'}
+    return {'error': True, 'message': 'Data entry is invalid. Customer ID and Driver ID must be valid integers.'}
 
-  valid_statuses = {'pending', 'completed', 'on-going'}
+
+  valid_statuses = {'pending', 'completed', 'on_route'}
   if orderStatus not in valid_statuses:
     return {'error': True , 'message': 'Data entry is invalid. Order status is invalid'}
 
