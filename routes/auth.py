@@ -90,7 +90,7 @@ def signin():
         password = user_data.get('password')
 
         if not all([email, password]):
-            return jsonify({"error": "Incomplete data. Both email and password are required."}), 400
+            return jsonify({"error": "Incomplete data. Both email and password are required."}), 400 
 
         user = session.query(User).filter_by(email=email).first()
 
