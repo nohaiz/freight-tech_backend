@@ -1,5 +1,5 @@
 #  IMPORTS
-
+from sqlalchemy import or_
 from flask import Blueprint , request, jsonify
 
 #  MODEL
@@ -20,7 +20,10 @@ session = SessionLocal()
 
 def index():
   try:
-    orders = session.query(Order).filter_by(driverId = request.user.get('userId')).all()
+    orders = session.query(Order).filter(
+    or_(
+        Order.driverId == request.user.get('userId'),
+        Order.driverId == None)).all()
     if not orders:
       return jsonify({'error': 'Order not found'}), 404
     
@@ -42,6 +45,8 @@ def show(id):
         if not order:
           return jsonify({'error': 'Order not found'}), 404        
         return jsonify(order.to_dict())
+      elif order.driverId is None:
+        return jsonify(order.to_dict())          
       else:
         return jsonify({"error": 'Opps something went wrong'}),400  
   except Exception as e:
@@ -64,12 +69,18 @@ def update(id):
             return jsonify({'error': validate_result.get('message')}), 400
         
         if request.user.get('userId') == order.driverId:
-            order.orderStatus = order_data.get('orderStatus')
+
+          if order.orderStatus == OrderStatusEnum.completed:
+            return jsonify({"error": "The order is completed; Changes can not be made to this order."}), 400
+          order.orderStatus = order_data.get('orderStatus')
+
         elif order.driverId is None:
+            
             if order.orderStatus != OrderStatusEnum.pending:
               return jsonify({"error": "The order is unclaimed; please set the order status to 'pending'."}), 400
             order.driverId = request.user.get('userId')
             order.orderStatus = OrderStatusEnum.pending
+
         else:
           return jsonify({"error": 'Opps something went wrong'}),400  
         

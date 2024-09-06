@@ -20,7 +20,7 @@ def validate_date(data):
   except ValueError:
       return {'error': True, 'message': 'Data entry is invalid. Customer ID and Driver ID must be valid integers.'}
 
-  valid_statuses = {'pending', 'completed', 'on-going'}
+  valid_statuses = {'pending', 'completed', 'on_route'}
   if orderStatus not in valid_statuses:
     return {'error': True , 'message': 'Data entry is invalid. Order status is invalid'}
 
