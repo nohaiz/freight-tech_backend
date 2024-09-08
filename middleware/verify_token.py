@@ -1,10 +1,16 @@
 import os
 import jwt
 from flask import request, jsonify
+from flask import Response
+
 
 JWT_SECRET = os.getenv('JWT_SECRET')
 
 def verify_token():
+
+    if request.method.lower() == 'options':
+        return Response()
+    
     if request.blueprint == 'auth_routes':
         return
     token = request.headers.get('Authorization')
