@@ -4,7 +4,7 @@ from flask import Blueprint , request, jsonify
 
 #  MODEL
 
-from config.database import Order,OrderStatusEnum, SessionLocal
+from config.database import Order,User,OrderStatusEnum, SessionLocal
 
 # EXPORTED FUNCTION
 
@@ -45,7 +45,13 @@ def show(id):
           return jsonify({'error': 'Order not found'}), 404        
       
       if  request.user.get('userId') == order.driverId:
-        return jsonify(order.to_dict())
+
+        shipperName = session.query(User).filter_by(userId=order.customerId).first()
+        combined_data = order.to_dict()
+        combined_data['customerName'] = shipperName.username
+
+        return jsonify(combined_data)
+      
       elif order.driverId is None:
         return jsonify(order.to_dict())          
       else:
