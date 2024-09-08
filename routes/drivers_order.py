@@ -42,18 +42,17 @@ def show(id):
   try:
       order = session.query(Order).filter_by(orderId=id).first()
       if not order:
-          return jsonify({'error': 'Order not found'}), 404        
-      
+          return jsonify({'error': 'Order not found'}), 404     
+         
+      shipperName = session.query(User).filter_by(userId=order.customerId).first()
+      combined_data = order.to_dict()
+      combined_data['customerName'] = shipperName.username
+
       if  request.user.get('userId') == order.driverId:
-
-        shipperName = session.query(User).filter_by(userId=order.customerId).first()
-        combined_data = order.to_dict()
-        combined_data['customerName'] = shipperName.username
-
         return jsonify(combined_data)
       
       elif order.driverId is None:
-        return jsonify(order.to_dict())          
+        return jsonify(combined_data)          
       else:
         return jsonify({"error": 'Opps something went wrong'}),400  
   except Exception as e:
