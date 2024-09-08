@@ -87,11 +87,13 @@ def show(id):
       return jsonify({'error': 'Order not found'}), 404
     
     if  request.user.get('userId') == order.customerId: 
-
-        driverName = session.query(User).filter_by(userId=order.driverId).first()
-        combined_data = order.to_dict()
-        combined_data['driverName'] = driverName.username
-        return jsonify(combined_data)  
+        if not order.to_dict().get('driverId'):
+          return jsonify(order.to_dict())  
+        else:
+          driverName = session.query(User).filter_by(userId=order.driverId).first()
+          combined_data = order.to_dict()
+          combined_data['driverName'] = driverName.username
+          return jsonify(combined_data)  
        
     else:
       return jsonify({"error": 'Opps something went wrong'}),400  
