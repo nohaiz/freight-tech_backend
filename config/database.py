@@ -103,7 +103,7 @@ class Order(Base):
         self.deliveryTime = deliveryTime
 
     def to_dict(self):
-        return {"orderId": self.orderId,"customerId": self.customerId,"driverId": self.driverId,"pickupLocation": self.pickupLocation,"dropoffLocation": self.dropoffLocation,"orderStatus": self.orderStatus.value,  "paymentAmount": self.paymentAmount,"vehicleType": self.vehicleType.value,"weightValue": self.weightValue,"deliveryTime": self.deliveryTime.isoformat(),"createdAt": self.createdAt.isoformat(),"updatedAt": self.updatedAt.isoformat()
+        return {"orderId": self.orderId,"customerId": self.customerId,"driverId": self.driverId,"pickupLocation": self.pickupLocation,"dropoffLocation": self.dropoffLocation,"orderStatus": self.orderStatus.value,  "paymentAmount": self.paymentAmount,"vehicleType": self.vehicleType.value,"weightValue": self.weightValue,"deliveryTime": self.deliveryTime.isoformat(),"createdAt": self.createdAt.isoformat(),"updatedAt": self.updatedAt.isoformat(),'dimensions': self.dimensions
         }
     
 def get_env_variable(var_name, default_value=None):
