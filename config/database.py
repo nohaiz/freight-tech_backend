@@ -1,6 +1,6 @@
 import os
 import enum
-from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, Enum, Float, Text, Date,DateTime, Boolean, func 
+from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, Enum, Float, Text,DateTime, Boolean, func 
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
@@ -86,7 +86,7 @@ class Order(Base):
     vehicleType = Column(Enum(VehicleTypeEnum), nullable=False)
     dimensions = Column(Text, nullable=False)
     weightValue = Column(Float, nullable=False)
-    deliveryTime = Column(Date, nullable=False)
+    deliveryTime = Column(DateTime, nullable=False)
     createdAt = Column(DateTime, default=func.now())
     updatedAt = Column(DateTime, default=func.now(), onupdate=func.now())
 
