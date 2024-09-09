@@ -59,6 +59,14 @@ def create():
     invalid_roles = [role for role in roles if role not in UserRoleEnum.__members__]
     if invalid_roles:
         return jsonify({'error': f"Invalid roles: {', '.join(invalid_roles)}"}), 400
+    
+    for role_name in set(roles):  
+        set_role = session.query(Role).filter_by(role=UserRoleEnum[role_name]).first()
+
+        if role_name == 'shipper' and 'driver' in roles:
+            return jsonify({'error': 'A user cannot be both a shipper and a driver'}), 400
+    
+
 
     password = user_data.get('password')
     confirm_password = user_data.get('confirmPassword')
@@ -83,6 +91,10 @@ def create():
 
         for role_name in set(roles):  
             set_role = session.query(Role).filter_by(role=UserRoleEnum[role_name]).first()
+            # make that you can't create a user with the role of shipper and driver
+
+            if role_name == 'shipper' and 'driver' in roles:
+                return jsonify({'error': 'A user cannot be both a shipper and a driver'}), 400
             if set_role:
                 user_role = UserRole(userId=new_user.userId, roleId=set_role.roleId)
                 session.add(user_role)
@@ -147,7 +159,11 @@ def update(userId):
             invalid_roles = [role for role in roles if role not in UserRoleEnum.__members__]
             if invalid_roles:
                 return jsonify({'error': f"Invalid roles: {', '.join(invalid_roles)}."}), 400
-
+            
+            for role_name in set(roles):
+                if role_name == 'shipper' and 'driver' in roles:
+                    return jsonify({'error': 'A user cannot be both a shipper and a driver'}), 400
+                
             for user_role in user.roles:
                 session.delete(user_role)
 
