@@ -56,7 +56,7 @@ def create_order():
 
         if not customer_user or not driver_user:
             return jsonify({'error': 'Invalid customer or driver ID'}), 400
-        if order_data.get('customerId') != customer_user.userId and order_data.get('driverId') != driver_user.userId:
+        if int(order_data.get('customerId')) != customer_user.userId and int(order_data.get('driverId')) != driver_user.userId:
             return jsonify({'error': 'Invalid customer or driver ID'}), 400
         
         else:    
