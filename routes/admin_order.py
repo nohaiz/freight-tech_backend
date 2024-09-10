@@ -172,3 +172,42 @@ def delete(id):
     finally:
         session.close()
     
+@admin_order_routes.route('/admin/orders/unclaimed', methods=['GET'])
+def get_unclaimed_orders():
+    if request.user.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized access'}), 401
+    
+    try:
+        unclaimed_orders = session.query(Order).filter_by(orderStatus='unclaimed').all()
+
+        if not unclaimed_orders:
+            return jsonify({'error': 'No unclaimed orders found'}), 404
+        
+        order_list = [order.to_dict() for order in unclaimed_orders]
+        return jsonify(order_list), 200
+    
+    except Exception as e:
+        session.rollback()
+        return jsonify({'error': str(e)}), 400
+    finally:
+        session.close()
+
+@admin_order_routes.route('/admin/orders/claimed', methods=['GET'])
+def get_claimed_orders():
+    if request.user.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized access'}), 401
+    
+    try:
+        claimed_orders = session.query(Order).filter_by(orderStatus='claimed').all()
+
+        if not claimed_orders:
+            return jsonify({'error': 'No claimed orders found'}), 404
+        
+        order_list = [order.to_dict() for order in claimed_orders]
+        return jsonify(order_list), 200
+    
+    except Exception as e:
+        session.rollback()
+        return jsonify({'error': str(e)}), 400
+    finally:
+        session.close()
