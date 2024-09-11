@@ -85,10 +85,11 @@ def delete(userId):
             if not user:
                 return jsonify({'error': 'User not found'}), 404
 
-            user_role = session.query(UserRole).filter_by(userId=userId).first()
+            user_role = session.query(UserRole).filter_by(userId=userId).all()
             if user_role:
-                session.delete(user_role)
-
+                for user_role in user_role:
+                    session.delete(user_role)
+                    
             orders = session.query(Order).filter(
                 or_(Order.customerId == userId, Order.driverId == userId)
             ).all()

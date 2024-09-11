@@ -1,7 +1,7 @@
+import bcrypt
 from flask import Blueprint, request, jsonify 
 from sqlalchemy import or_
-import bcrypt
-from config.database import User, Role, UserRole, UserRoleEnum, SessionLocal
+from config.database import User, Role, UserRole,Order,UserRoleEnum, SessionLocal
 
 admin_routes = Blueprint('admin_routes', __name__)
 
@@ -203,6 +203,9 @@ def delete(userId):
         for user_role in user_roles:
             session.delete(user_role)
         
+        orders = session.query(Order).filter(or_(Order.customerId == userId, Order.driverId == userId)).all()
+        for order in orders:
+            session.delete(order)
         session.delete(user)
         session.commit()
 
