@@ -53,7 +53,7 @@ def create_order():
         
         customer_user = session.query(User).filter(User.userId == order_data.get('customerId')).first()
 
-        if order_data.get('driverId') == 0:
+        if int(order_data.get('driverId')) == 0:
             new_order = Order(
                 customerId=order_data.get('customerId'),
                 driverId=None,
@@ -142,7 +142,7 @@ def update(id):
         
         customer_user = session.query(User).filter(User.userId == order_data.get('customerId')).first()
 
-        if order_data.get('driverId') == 0:
+        if int(order_data.get('driverId')) == 0:
             order.customerId = order_data.get('customerId')
             order.driverId = None
             order.pickupLocation = order_data.get('pickupLocation')
