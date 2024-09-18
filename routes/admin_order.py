@@ -19,9 +19,15 @@ session = SessionLocal()
 def index():
     if request.user.get('role') != 'admin':
         return jsonify({'error': 'Unauthorized access'}), 401
-    
+
+    user_id = request.args.get('userId')
+
     try:
         orders = session.query(Order).all()
+        if user_id:
+            orders = session.query(Order).filter_by(customerId=user_id).all()
+        else:    
+            orders = session.query(Order).all()
 
         if not orders:
             return jsonify({'error': 'Order not found'}), 404
